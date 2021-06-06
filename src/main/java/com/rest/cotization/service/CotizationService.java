@@ -63,7 +63,7 @@ public class CotizationService {
 		}
 	}
 
-	// Regresa el codigo y el nombre se las monedas,
+	// Regresa el código y el nombre se las monedas,
 	// como dato de entrada requiere el grupo 1-mercado internacional
 	// 2-mercado local, 0-ambos
 	public List<MonedaDTO> getNombreMonedas(int grupo) throws Exception {
@@ -92,7 +92,7 @@ public class CotizationService {
 		return res;
 	}
 
-	// Regresa la cotizacion de la moneda elegida en determinada fecha e informacion
+	// Regresa la cotización de la moneda elegida en determinada fecha e información
 	// adicional
 	public List<DataCotizationDTO> getCotization(DataCotizationInDTO data) throws Exception {
 		List<DataCotizationDTO> res = new ArrayList<DataCotizationDTO>();
@@ -172,7 +172,7 @@ public class CotizationService {
 
 		if (validateGroup(data.getGrupo()).equals("")
 				&& validateDate(data.getFechaDesde(), data.getFechaHasta()).equals("")) {
-			validateCodes(data.getGrupo(), data.getMonedas());
+			res = validateCodes(data.getGrupo(), data.getMonedas());
 			return res;
 		} else if (!validateGroup(data.getGrupo()).equals("")) {
 			res = validateGroup(data.getGrupo());
@@ -193,7 +193,7 @@ public class CotizationService {
 				if (inicio.isAfter(fin)) {
 					res = "La fecha final no puede ser anterior a la inicial";
 				} else if (ChronoUnit.DAYS.between(inicio, fin) > 31) {
-					res = "El rango máximo entre fechas es de 31  días";
+					res = "El rango máximo entre fechas es de 31 días";
 				}
 			}
 		} catch (Exception e) {
@@ -204,16 +204,19 @@ public class CotizationService {
 
 	private String validateGroup(int grupo) {
 		String res = "";
-		if (!(0 <= grupo && grupo < 2)) {
-			res = "Error en el grupo ingresado, el código no es válido";
+		if (!(0 <= grupo && grupo <= 2)) {
+			res = "El código de grupo ingresado no es válido";
 		}
 		return res;
 	}
 
-	private void validateCodes(int grupo, List<Short> monedas) throws Exception {
+	private String validateCodes(int grupo, List<Short> monedas) throws Exception {
 		List<Short> monedasHabilitadas = new ArrayList<Short>();
-
+		String res = "";
 		try {
+			if (monedas.isEmpty()) {
+				return "Se debe elegir al menos una moneda";
+			}
 			getNombreMonedas(grupo).forEach(data -> monedasHabilitadas.add(data.getCodigo()));
 			for (var moneda : monedas) {
 				if (!monedasHabilitadas.contains(moneda))
@@ -221,7 +224,8 @@ public class CotizationService {
 			}
 
 		} catch (Exception e) {
-			throw e;
+			res = e.getMessage();
 		}
+		return res;
 	}
 }

@@ -38,12 +38,12 @@ public class CotizationController {
 		String res = "";
 		try{
 			res = cotizationService.getUltimoCierre();
+			return new ResponseEntity<String>(res, HttpStatus.OK);
 			
 		} catch(Exception e) {
 			logger.error("Error al obtener fecha de cierre de las cotizaciones: " + e);
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Error al obtener fecha de cierre de las cotizaciones"), HttpStatus.EXPECTATION_FAILED);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Error al obtener fecha de cierre de las cotizaciones"), HttpStatus.SERVICE_UNAVAILABLE);
 		}
-		return new ResponseEntity<String>(res, HttpStatus.OK);
 	}
 	
 	
@@ -55,11 +55,11 @@ public class CotizationController {
 			if (grupo >= 0 && grupo < 3)
 				res = cotizationService.getNombreMonedas(grupo);
 			else
-				return new ResponseEntity<MessageDTO>(new MessageDTO("Codigo incorrecto"), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<MessageDTO>(new MessageDTO("Código incorrecto"), HttpStatus.BAD_REQUEST);
 			
 		} catch(Exception e) {
-			logger.error("Error al obtener las monedas de las que hay informacion: " + e);
-			return new ResponseEntity<MessageDTO>(new MessageDTO("Error al obtener las monedas de las que hay informacion"), HttpStatus.EXPECTATION_FAILED);
+			logger.error("Error al obtener las monedas de las que hay información: " + e);
+			return new ResponseEntity<MessageDTO>(new MessageDTO("Error al obtener las monedas de las que hay información"), HttpStatus.SERVICE_UNAVAILABLE);
 		}
 		return new ResponseEntity<List<MonedaDTO>>(res, HttpStatus.OK);
 	}
@@ -73,7 +73,7 @@ public class CotizationController {
 			res = cotizationService.getCotization(monedas);
 			
 		}catch(Exception e) {
-			logger.error("Error al obtener la cotizacion de las monedas: " + e);
+			logger.error("Error al obtener la cotización de las monedas: " + e);
 			return new ResponseEntity<MessageDTO>(new MessageDTO("Error: " + e.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 		return new ResponseEntity<List<DataCotizationDTO>>(res, HttpStatus.OK);
